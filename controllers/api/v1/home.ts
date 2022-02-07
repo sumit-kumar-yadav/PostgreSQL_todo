@@ -4,11 +4,8 @@ const Task = require('../../../models/todo');
 
 const fetchTasks = async (req: Request , res: Response)=>{
     try{
-        // This creates the table if it doesn't exist (and does nothing if it already exists)
-        await Task.sync();
-
         // Find all the contact lists and return them
-        let tasks = await Task.findAll();
+        let tasks = await Task.findAll({ include: Category });
 
         return res.status(200).json({
             message: "All tasks",
@@ -16,40 +13,75 @@ const fetchTasks = async (req: Request , res: Response)=>{
         });
 
     }catch(err){
-        console.log("Error in home controller", err);
+        console.log("Error in fetching tasks", err);
         return res.status(500).json({
             message: "Internal server error"
         });
     }
 }
 
-// const createTask =async (req: Request, res: Response) => {
-//     try {
-//         // console.log("Inside the body", req.body);
+const fetchCategories = async (req: Request, res: Response) => {
+    try {
+        // Find all the contact lists and return them
+        let categories = await Category.findAll();
 
-//         // This creates the table, dropping it first if it already existed
-//         await Task.sync();
+        return res.status(200).json({
+            message: "All categories",
+            data: categories
+        });
+    } catch (err) {
+        console.log("Error in fetching categories", err);
+        return res.status(500).json({
+            message: "Internal server error"
+        });
+    }
+}
 
-//         // Create a contact
-//         let contact = await Task.create({
-//             name: req.body.name,
-//             mobile_no: req.body.mobileNo
-//         });
+const createTask = async (req: Request, res: Response) => {
+    try {
+        console.log("Inside the body", req.body);
+
+        // Create a contact
+        let task = await Task.create({
+            title: req.body.title,
+            description: req.body.description,
+            category_id: req.body.category_id
+        });
         
-//         contact = contact.toJSON();
-//         // console.log("New contact created: ", contact);
-//         return res.status(200).json({
-//             message: "New contact created",
-//             data: contact
-//         });
 
-//     } catch (err) {
-//         console.log("Error in creating a contact", err);
-//         return res.status(500).json({
-//             message: "Internal server error"
-//         });
-//     }
-// }
+        return res.status(200).json({
+            message: "New task created",
+            data: task.toJSON()
+        });
+
+    } catch (err) {
+        console.log("Error in creating a contact", err);
+        return res.status(500).json({
+            message: "Internal server error"
+        });
+    }
+}
+
+const createCategory =async (req: Request, res: Response) => {
+    try {
+        console.log("Inside the createCategory", req.body);
+
+        // Create a contact
+        let category = await Category.create({
+            type: req.body.type
+        });
+        
+        return res.status(200).json({
+            message: "New category created",
+            data: category.toJSON()
+        });
+    } catch (err) {
+        console.log("Error in creating category", err);
+        return res.status(500).json({
+            message: "Internal server error"
+        });
+    }
+}
 
 // const deleteTask = async (req: Request, res: Response) => {
 //     try {
@@ -90,8 +122,10 @@ const fetchTasks = async (req: Request , res: Response)=>{
 // }
 
 module.exports = {
-    // createTask,      // C
+    createTask,      // C
+    createCategory,
     fetchTasks,      // R
+    fetchCategories,
     // updateTask,      // U
     // deleteTask,      // D
 }

@@ -1,20 +1,25 @@
 {
-    const { Sequelize, DataTypes } = require('sequelize');  
+    const { Sequelize, DataTypes, Deferrable  } = require('sequelize');  
     const { sequelize } = require('../config/sequilize');
+    const Category = require('./category');
   
       const Todo = sequelize.define('Todo', {
-          // name: {
-          //   type: DataTypes.STRING,
-          //   allowNull: false
-          // },
-          // mobile_no: {
-          //   type: DataTypes.STRING,
-          //   allowNull: false,
-          //   // unique: true
-          // }
+          title: {
+            type: DataTypes.STRING,
+            allowNull: false
+          },
+          description: {
+            type: DataTypes.STRING,
+            allowNull: false
+          }
         }, {
           // options
+          paranoid: true,  // For soft delete
         });
+
+        // Define the relationship  (one to many)
+        Category.hasMany(Todo);  // Todo model will have foreign key i.e, categoryId with this syntax
+        Todo.belongsTo(Category, { foreignKey: 'category_id' });
         
       
       module.exports = Todo;
