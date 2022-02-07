@@ -83,6 +83,27 @@ const createCategory =async (req: Request, res: Response) => {
     }
 }
 
+const updateTask = async (req: Request, res: Response) => {
+    try {
+        await Task.update(req.query, {
+            where: {
+              id: req.params.id
+            }
+          });
+
+        return res.status(200).json({
+            message: "Task is updated",
+            data: true
+        });
+
+    } catch (error) {
+        console.log("Error in updating the contact", error);
+        return res.status(500).json({
+            message: "Internal server error"
+        });
+    }
+}
+
 // const deleteTask = async (req: Request, res: Response) => {
 //     try {
 //         let contact = await Task.findByPk(req.params.id);
@@ -100,32 +121,11 @@ const createCategory =async (req: Request, res: Response) => {
 //     }
 // }
 
-// const updateTask =async (req: Request, res: Response) => {
-//     try {
-//         await Task.update(req.query, {
-//             where: {
-//               id: req.params.id
-//             }
-//           });
-
-//         return res.status(200).json({
-//             message: "Task is updated",
-//             data: true
-//         });
-
-//     } catch (error) {
-//         console.log("Error in updating the contact", error);
-//         return res.status(500).json({
-//             message: "Internal server error"
-//         });
-//     }
-// }
-
 module.exports = {
     createTask,      // C
     createCategory,
     fetchTasks,      // R
     fetchCategories,
-    // updateTask,      // U
+    updateTask,      // U
     // deleteTask,      // D
 }
